@@ -6,10 +6,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-from trainer import Trainer
-from options import MonodepthOptions
+from trainer_monodepth2 import Trainer
+from options import LiteMonoOptions
 
-options = MonodepthOptions()
+options = LiteMonoOptions()
 opts = options.parse()
 
 
