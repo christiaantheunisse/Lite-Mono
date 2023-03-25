@@ -128,3 +128,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Christiaan
+kitti_data/
+data/
+tmp/
