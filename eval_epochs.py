@@ -49,5 +49,5 @@ for weight_dir in weight_dirs[args.start_epoch:]:
     print(f"\t The results are: a1 = {eval_stats['a1']}, a2 = {eval_stats['a2']}, a3 = {eval_stats['a3']}")
 
     # Save the performance in a dict to a file
-    with open(os.path.join(performance_dir, f'epoch_t_{epoch}.pkl'), 'wb') as f:
+    with open(os.path.join(performance_dir, f'epoch_{epoch}.pkl'), 'wb') as f:
         pickle.dump(eval_stats, f)
