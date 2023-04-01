@@ -132,3 +132,5 @@ dmypy.json
 # Christiaan
 kitti_data/
 data/
+nohup.out
+tmp
