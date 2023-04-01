@@ -253,9 +253,3 @@ class ParserImitate:
         self.max_depth = float(100.0)
 
 
-if __name__ == "__main__":
-    # options = LiteMonoOptions()
-    options = ParserImitate()
-    # eval_stats = evaluate(options.parse())
-    eval_stats = evaluate(options)
-    print(eval_stats)
