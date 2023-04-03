@@ -159,7 +159,7 @@ class Conv3x3(nn.Module):
             self.pad = nn.ZeroPad2d(1)
         print('in:',in_channels,'out:', out_channels)
         self.conv = nn.Conv2d(int(in_channels), int(out_channels), 3)
-        self.na2d = natten.NeighborhoodAttention2D(dim=int(in_channels), kernel_size=7, dilation=2, num_heads=4)
+        self.na2d = natten.NeighborhoodAttention2D(dim=14, kernel_size=7, dilation=2, num_heads=4)
         # self.conv = natten.NeighborhoodAttention2D(int(in_channels), int(out_channels), kernel_size=3, dilation=2)
         # self.conv = natten.NeighborhoodAttention2D(in_channels=int(in_channels), out_channels=int(out_channels), kernel_size=3, dilation=1, num_heads=4)
         # self.conv = nn.Conv2d(int(in_channels), int(out_channels), kernel_size=3, padding=3 // 2, groups=int(out_channels), bias=False)
