@@ -158,15 +158,15 @@ class Conv3x3(nn.Module):
         else:
             self.pad = nn.ZeroPad2d(1)
         # print('in:',in_channels,'out:', out_channels)
-        # self.conv = nn.Conv2d(int(in_channels), int(out_channels), 3)
-        self.na2d = natten.NeighborhoodAttention2D(dim=14, kernel_size=7, dilation=2, num_heads=4)
+        self.conv = nn.Conv2d(int(in_channels), int(out_channels), 3)
+        # self.na2d = natten.NeighborhoodAttention2D(dim=14, kernel_size=7, dilation=2, num_heads=4)
 
     def forward(self, x):
         out = self.pad(x)
         # print('out1:', out.size())
-        # out = self.conv(out)
+        out = self.conv(out)
         # print('out2:', out.size())
-        out = self.na2d(out)
+        # out = self.na2d(out)
         return out
 
 

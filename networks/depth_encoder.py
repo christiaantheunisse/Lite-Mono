@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from timm.models.layers import DropPath
 import math
 import torch.cuda
-
+import natten
 
 class PositionalEncodingFourier(nn.Module):
     """
@@ -160,9 +160,19 @@ class CDilated(nn.Module):
         :param d: optional dilation rate
         """
         super().__init__()
+        self.dimension = 100
         padding = int((kSize - 1) / 2) * d
-        self.conv = nn.Conv2d(nIn, nOut, kSize, stride=stride, padding=padding, bias=bias,
-                              dilation=d, groups=groups)
+        print('nIn, out:', nIn, nOut)
+        if nIn == 48:
+            self.dimension = 160
+        elif nIn == 80:
+            self.dimension = 80
+        elif nIn == 128:
+            self.dimension = 40
+        
+        self.conv =  natten.NeighborhoodAttention2D(dim=self.dimension, kernel_size=kSize, dilation=d, num_heads=4)
+        # self.conv = nn.Conv2d(nIn, nOut, kSize, stride=stride, padding=padding, bias=bias,
+        #                       dilation=d, groups=groups)
 
     def forward(self, input):
         """
@@ -190,7 +200,6 @@ class DilatedConv(nn.Module):
         """
 
         super().__init__()
-
         self.ddwconv = CDilated(dim, dim, kSize=k, stride=stride, groups=dim, d=dilation)
         self.bn1 = nn.BatchNorm2d(dim)
 
@@ -204,8 +213,12 @@ class DilatedConv(nn.Module):
 
     def forward(self, x):
         input = x
-
+        print('before cdilated:',x.shape)
+        a = x.shape[3]
+        print(a)
+        # self.test = a
         x = self.ddwconv(x)
+        print('after cdilated:',x.shape)
         x = self.bn1(x)
 
         x = x.permute(0, 2, 3, 1)  # (N, C, H, W) -> (N, H, W, C)
