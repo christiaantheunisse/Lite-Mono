@@ -160,23 +160,38 @@ class CDilated(nn.Module):
         :param d: optional dilation rate
         """
         super().__init__()
-        self.dimension = 100
         padding = int((kSize - 1) / 2) * d
-        # print('nIn, out:', nIn, nOut)
-        # if nIn == 48:
-        #     self.dimension = 160
-        # elif nIn == 80:
-        #     self.dimension = 80
-        # elif nIn == 128:
-        #     self.dimension = 40
+        self.conv = nn.Conv2d(nIn, nOut, kSize, stride=stride, padding=padding, bias=bias,
+                              dilation=d, groups=groups)
+
+    def forward(self, input):
+        """
+        :param input: input feature map
+        :return: transformed feature map
+        """
+
+        output = self.conv(input)
+        return output
+    
+class NA2D(nn.Module):
+    """
+    This class defines the dilated convolution.
+    """
+
+    def __init__(self, nIn, nOut, kSize, stride=1, d=1, groups=1, bias=False):
+        """
+        :param nIn: number of input channels
+        :param nOut: number of output channels
+        :param kSize: kernel size
+        :param stride: optional stride rate for down-sampling
+        :param d: optional dilation rate
+        """
+        super().__init__()
         if nIn != nOut:
             raise Exception()
         if stride != 1:
             raise Exception()
-        self.nIn = nIn
-        # self.conv0 = nn.Conv2d(nIn, nOut, kSize, stride=stride, padding=padding, bias=bias,
-        #                       dilation=d, groups=groups)
-        self.conv1 =  natten.NeighborhoodAttention2D(dim=nIn, kernel_size=kSize, dilation=d, num_heads=1)
+        self.na2d =  natten.NeighborhoodAttention2D(dim=nIn, kernel_size=kSize, dilation=d, num_heads=1)
 
 
     def forward(self, input):
@@ -184,13 +199,7 @@ class CDilated(nn.Module):
         :param input: input feature map
         :return: transformed feature map
         """
-        print('START')
-        print(self.nIn)
-        print('input shape: ', input.shape)
-        # output= self.conv0(input)
-        # print('output shape conv2d: ', output.shape)
-        output = self.conv1(input)
-        # print('output shape natten: ', output.shape)
+        output = self.na2d(input)
         return output
 
 
@@ -210,7 +219,7 @@ class DilatedConv(nn.Module):
         """
 
         super().__init__()
-        self.ddwconv = CDilated(dim, dim, kSize=k, stride=stride, groups=dim, d=dilation)
+        self.ddwconv = NA2D(dim, dim, kSize=k, stride=stride, groups=dim, d=dilation)
         self.bn1 = nn.BatchNorm2d(dim)
 
         self.norm = LayerNorm(dim, eps=1e-6)
@@ -223,14 +232,10 @@ class DilatedConv(nn.Module):
 
     def forward(self, x):
         input = x
-        print('before cdilated:',x.shape)
-        a = x.shape[3]
-        # print(a)
-        # self.test = a
+
         x = x.permute(0, 2, 3, 1)  # (N, C, H, W) -> (N, H, W, C)
         x = self.ddwconv(x)
         x = x.permute(0, 3, 1, 2)  # (N, H, W, C) -> (N, C, H, W)
-        print('after cdilated:',x.shape)
         x = self.bn1(x)
 
         x = x.permute(0, 2, 3, 1)  # (N, C, H, W) -> (N, H, W, C)
