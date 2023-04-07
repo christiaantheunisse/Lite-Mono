@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
-import natten
 
 
 def disp_to_depth(disp, min_depth, max_depth):
@@ -114,38 +113,38 @@ class ConvBlock(nn.Module):
         return out
 
 
-# class ConvBlockDepth(nn.Module):
-#     """Layer to perform a convolution followed by ELU
-#     """
-#     def __init__(self, in_channels, out_channels):
-#         super(ConvBlockDepth, self).__init__()
+class ConvBlockDepth(nn.Module):
+    """Layer to perform a convolution followed by ELU
+    """
+    def __init__(self, in_channels, out_channels):
+        super(ConvBlockDepth, self).__init__()
 
-#         self.conv = DepthConv3x3(in_channels, out_channels)
-#         self.nonlin = nn.GELU()
+        self.conv = DepthConv3x3(in_channels, out_channels)
+        self.nonlin = nn.GELU()
 
-#     def forward(self, x):
-#         out = self.conv(x)
-#         out = self.nonlin(out)
-#         return out
+    def forward(self, x):
+        out = self.conv(x)
+        out = self.nonlin(out)
+        return out
 
 
-# class DepthConv3x3(nn.Module):
-#     """Layer to pad and convolve input
-#     """
-#     def __init__(self, in_channels, out_channels, use_refl=True):
-#         super(DepthConv3x3, self).__init__()
+class DepthConv3x3(nn.Module):
+    """Layer to pad and convolve input
+    """
+    def __init__(self, in_channels, out_channels, use_refl=True):
+        super(DepthConv3x3, self).__init__()
 
-#         if use_refl:
-#             self.pad = nn.ReflectionPad2d(1)
-#         else:
-#             self.pad = nn.ZeroPad2d(1)
-#         # self.conv = nn.Conv2d(int(in_channels), int(out_channels), 3)
-#         self.conv = nn.Conv2d(int(in_channels), int(out_channels), kernel_size=3, groups=int(out_channels), bias=False)
+        if use_refl:
+            self.pad = nn.ReflectionPad2d(1)
+        else:
+            self.pad = nn.ZeroPad2d(1)
+        # self.conv = nn.Conv2d(int(in_channels), int(out_channels), 3)
+        self.conv = nn.Conv2d(int(in_channels), int(out_channels), kernel_size=3, groups=int(out_channels), bias=False)
 
-#     def forward(self, x):
-#         out = self.pad(x)
-#         out = self.conv(out)
-#         return out
+    def forward(self, x):
+        out = self.pad(x)
+        out = self.conv(out)
+        return out
 
 class Conv3x3(nn.Module):
     """Layer to pad and convolve input
@@ -157,16 +156,12 @@ class Conv3x3(nn.Module):
             self.pad = nn.ReflectionPad2d(1)
         else:
             self.pad = nn.ZeroPad2d(1)
-        # print('in:',in_channels,'out:', out_channels)
         self.conv = nn.Conv2d(int(in_channels), int(out_channels), 3)
-        # self.na2d = natten.NeighborhoodAttention2D(dim=14, kernel_size=7, dilation=2, num_heads=4)
+        # self.conv = nn.Conv2d(int(in_channels), int(out_channels), kernel_size=3, padding=3 // 2, groups=int(out_channels), bias=False)
 
     def forward(self, x):
         out = self.pad(x)
-        # print('out1:', out.size())
         out = self.conv(out)
-        # print('out2:', out.size())
-        # out = self.na2d(out)
         return out
 
 
@@ -301,5 +296,4 @@ def compute_depth_errors(gt, pred):
     sq_rel = torch.mean((gt - pred) ** 2 / gt)
 
     return abs_rel, sq_rel, rmse, rmse_log, a1, a2, a3
-
 
