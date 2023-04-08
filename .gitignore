@@ -131,6 +131,11 @@ dmypy.json
 
 # Christiaan
 kitti_data/
+kitti_data_try_out/
 data/
 nohup.out
 tmp
+*.pdf
+splits/eigen/test_files_reduced.txt
+*.ipynb
+*.npz
