@@ -15,6 +15,9 @@ parser.add_argument("--models_dir",
                     help="the directory where the models for every epoch are stored")
 parser.add_argument("--performance_dir",
                     help="the folder where the pkl files with the results should be stored")
+parser.add_argument("--data_path",
+                    help="the folder where the kitti dataset is stored",
+                    default="")
 parser.add_argument("--start_epoch",
                     help="the number of the epoch where the evaluation should start",
                     type=int,
@@ -24,6 +27,7 @@ args = parser.parse_args()
 
 models_dir = args.models_dir
 performance_dir = args.performance_dir
+data_path = args.data_path
 
 print(f"The models are taken from file {models_dir}; starting at epoch{args.start_epoch}")
 
@@ -44,7 +48,7 @@ for weight_dir in weight_dirs[args.start_epoch:]:
     print(f"Evaluating the model in {load_weights_folder} for epoch {epoch}:")
 
     # Evaluate the model performance
-    options = ParserImitate(load_weights_folder)
+    options = ParserImitate(load_weights_folder, data_path)
     eval_stats = evaluate(options)
     print(f"\t The results are: a1 = {eval_stats['a1']}, a2 = {eval_stats['a2']}, a3 = {eval_stats['a3']}")
 
