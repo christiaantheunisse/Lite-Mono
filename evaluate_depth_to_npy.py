@@ -233,7 +233,7 @@ def evaluate(opt):
 
 
 class ParserImitate:
-    def __init__(self, load_weights_folder: str):
+    def __init__(self, load_weights_folder: str, data_path: str = None):
         """
         :param load_weights_folder: The folder where the weights are stored (encoder.pth, decoder.pth)
         """
@@ -246,7 +246,7 @@ class ParserImitate:
         self.eval_out_dir = None
         self.post_process = False
         self.load_weights_folder = load_weights_folder
-        self.data_path = 'kitti_data'
+        self.data_path = 'kitti_data' if data_path is None else data_path
         self.num_workers = 12
         self.model = 'lite-mono'
         self.min_depth = float(0.1)
