@@ -303,40 +303,42 @@ class LiteMono(nn.Module):
         super().__init__()
 
         if model == 'lite-mono':
-            self.num_ch_enc = np.array([48, 80, 128])
-            self.depth = [4, 4, 10]
-            self.dims = [48, 80, 128]
+            self.num_ch_enc = np.array([48, 80, 128, 208])
+            self.depth = [4, 4, 4, 10]
+            self.dims = [48, 80, 128, 208]
             if height == 192 and width == 640:
-                self.dilation = [[1, 2, 3], [1, 2, 3], [1, 2, 3, 1, 2, 3, 2, 4, 6]]
+                self.dilation = [[1, 2, 3], [1, 2, 3], [1,2,3], [1, 2, 3, 1, 2, 3, 2, 4, 6]]
             elif height == 320 and width == 1024:
-                self.dilation = [[1, 2, 5], [1, 2, 5], [1, 2, 5, 1, 2, 5, 2, 4, 10]]
+                self.dilation = [[1, 2, 5], [1, 2, 5], [1,2,5], [1, 2, 5, 1, 2, 5, 2, 4, 10]]
+        else:
+            print()
 
-        elif model == 'lite-mono-small':
-            self.num_ch_enc = np.array([48, 80, 128])
-            self.depth = [4, 4, 7]
-            self.dims = [48, 80, 128]
-            if height == 192 and width == 640:
-                self.dilation = [[1, 2, 3], [1, 2, 3], [1, 2, 3, 2, 4, 6]]
-            elif height == 320 and width == 1024:
-                self.dilation = [[1, 2, 5], [1, 2, 5], [1, 2, 5, 2, 4, 10]]
+        # elif model == 'lite-mono-small':
+        #     self.num_ch_enc = np.array([48, 80, 128])
+        #     self.depth = [4, 4, 7]
+        #     self.dims = [48, 80, 128]
+        #     if height == 192 and width == 640:
+        #         self.dilation = [[1, 2, 3], [1, 2, 3], [1, 2, 3, 2, 4, 6]]
+        #     elif height == 320 and width == 1024:
+        #         self.dilation = [[1, 2, 5], [1, 2, 5], [1, 2, 5, 2, 4, 10]]
 
-        elif model == 'lite-mono-tiny':
-            self.num_ch_enc = np.array([32, 64, 128])
-            self.depth = [4, 4, 7]
-            self.dims = [32, 64, 128]
-            if height == 192 and width == 640:
-                self.dilation = [[1, 2, 3], [1, 2, 3], [1, 2, 3, 2, 4, 6]]
-            elif height == 320 and width == 1024:
-                self.dilation = [[1, 2, 5], [1, 2, 5], [1, 2, 5, 2, 4, 10]]
+        # elif model == 'lite-mono-tiny':
+        #     self.num_ch_enc = np.array([32, 64, 128])
+        #     self.depth = [4, 4, 7]
+        #     self.dims = [32, 64, 128]
+        #     if height == 192 and width == 640:
+        #         self.dilation = [[1, 2, 3], [1, 2, 3], [1, 2, 3, 2, 4, 6]]
+        #     elif height == 320 and width == 1024:
+        #         self.dilation = [[1, 2, 5], [1, 2, 5], [1, 2, 5, 2, 4, 10]]
 
-        elif model == 'lite-mono-8m':
-            self.num_ch_enc = np.array([64, 128, 224])
-            self.depth = [4, 4, 10]
-            self.dims = [64, 128, 224]
-            if height == 192 and width == 640:
-                self.dilation = [[1, 2, 3], [1, 2, 3], [1, 2, 3, 1, 2, 3, 2, 4, 6]]
-            elif height == 320 and width == 1024:
-                self.dilation = [[1, 2, 3], [1, 2, 3], [1, 2, 3, 1, 2, 3, 2, 4, 6]]
+        # elif model == 'lite-mono-8m':
+        #     self.num_ch_enc = np.array([64, 128, 224])
+        #     self.depth = [4, 4, 10]
+        #     self.dims = [64, 128, 224]
+        #     if height == 192 and width == 640:
+        #         self.dilation = [[1, 2, 3], [1, 2, 3], [1, 2, 3, 1, 2, 3, 2, 4, 6]]
+        #     elif height == 320 and width == 1024:
+        #         self.dilation = [[1, 2, 3], [1, 2, 3], [1, 2, 3, 1, 2, 3, 2, 4, 6]]
 
         for g in global_block_type:
             assert g in ['None', 'LGFI']
@@ -355,10 +357,10 @@ class LiteMono(nn.Module):
         self.downsample_layers.append(stem1)
 
         self.input_downsample = nn.ModuleList()
-        for i in range(1, 5):
+        for i in range(1, 6):
             self.input_downsample.append(AvgPool(i))
 
-        for i in range(2):
+        for i in range(3):
             downsample_layer = nn.Sequential(
                 Conv(self.dims[i]*2+3, self.dims[i+1], kSize=3, stride=2, padding=1, bn_act=False),
             )
@@ -367,7 +369,7 @@ class LiteMono(nn.Module):
         self.stages = nn.ModuleList()
         dp_rates = [x.item() for x in torch.linspace(0, drop_path_rate, sum(self.depth))]
         cur = 0
-        for i in range(3):
+        for i in range(4):
             stage_blocks = []
             for j in range(self.depth[i]):
                 if j > self.depth[i] - global_block[i] - 1:
@@ -407,7 +409,7 @@ class LiteMono(nn.Module):
         x = (x - 0.45) / 0.225
 
         x_down = []
-        for i in range(4):
+        for i in range(5):
             x_down.append(self.input_downsample[i](x))
 
         tmp_x = []
@@ -421,7 +423,7 @@ class LiteMono(nn.Module):
         tmp_x.append(x)
         features.append(x)
 
-        for i in range(1, 3):
+        for i in range(1, 4):
             tmp_x.append(x_down[i])
             x = torch.cat(tmp_x, dim=1)
             x = self.downsample_layers[i](x)

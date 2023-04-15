@@ -18,7 +18,7 @@ class DepthDecoder(nn.Module):
 
         # decoder
         self.convs = OrderedDict()
-        for i in range(2, -1, -1):
+        for i in range(3, -1, -1):
             # upconv_0
             num_ch_in = self.num_ch_enc[-1] if i == 2 else self.num_ch_dec[i + 1]
             num_ch_out = self.num_ch_dec[i]
