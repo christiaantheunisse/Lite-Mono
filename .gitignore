@@ -139,3 +139,4 @@ tmp
 splits/eigen/test_files_reduced.txt
 *.ipynb
 *.npz
+torch
