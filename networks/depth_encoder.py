@@ -296,9 +296,9 @@ class LiteMono(nn.Module):
     Lite-Mono
     """
     def __init__(self, in_chans=3, model='lite-mono', height=192, width=640,
-                 global_block=[1, 1, 1], global_block_type=['LGFI', 'LGFI', 'LGFI'],
+                 global_block=[1, 1, 1, 1], global_block_type=['LGFI', 'LGFI', 'LGFI', 'LGFI'],
                  drop_path_rate=0.2, layer_scale_init_value=1e-6, expan_ratio=6,
-                 heads=[8, 8, 8], use_pos_embd_xca=[True, False, False], **kwargs):
+                 heads=[8, 8, 8, 8], use_pos_embd_xca=[True, False, False, False], **kwargs):
 
         super().__init__()
 

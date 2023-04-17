@@ -48,7 +48,7 @@ class DepthDecoder(nn.Module):
     def forward(self, input_features):
         self.outputs = {}
         x = input_features[-1]
-        for i in range(2, -1, -1):
+        for i in range(3, -1, -1):
             x = self.convs[("upconv", i, 0)](x)
             x = [upsample(x)]
 
