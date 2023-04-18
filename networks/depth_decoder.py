@@ -20,7 +20,7 @@ class DepthDecoder(nn.Module):
         self.convs = OrderedDict()
         for i in range(3, -1, -1):
             # upconv_0
-            num_ch_in = self.num_ch_enc[-1] if i == 2 else self.num_ch_dec[i + 1]
+            num_ch_in = self.num_ch_enc[-1] if i == 3 else self.num_ch_dec[i + 1]
             num_ch_out = self.num_ch_dec[i]
             self.convs[("upconv", i, 0)] = ConvBlock(num_ch_in, num_ch_out)
             # print(i, num_ch_in, num_ch_out)
