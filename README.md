@@ -277,9 +277,9 @@ To conclude, removing a stage and adding a stage decreases and increases perform
 [^Dinat]: Hassani, A., & Shi, H. (2022). Dilated neighborhood attention transformer. arXiv preprint arXiv:2209.15001.
 [^NATTEN]: Natten. (2023, March 21). PyPI. https://pypi.org/project/natten/
 #### Who was responsible for which part?
- - Christiaan Theunisse: setting up the Google enviroment and adapting the training procedure
- - Fabian Gebben: using dilated neighbourhood attention instead of normal dilated convolutions 
- - Kieran de Klerk: evaluating the performance of slightly altered versions of the algorithm
+ - Christiaan Theunisse: setting up the Google enviroment and adapting the training procedure (in the main branch)
+ - Fabian Gebben: using dilated neighbourhood attention instead of normal dilated convolutions (in the fabian_dina branch)
+ - Kieran de Klerk: evaluating the performance of slightly altered versions of the algorithm (in the 3_stages and 5_stages branch)
 
 
 
